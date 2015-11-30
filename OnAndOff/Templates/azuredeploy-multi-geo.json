@@ -1,0 +1,86 @@
+﻿{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "locations": {
+      "type": "array",
+      "defaultValue": [
+        "eastasia",
+        "southeastasia",
+        "eastus",
+        "westus",
+        "westeurope"
+      ],
+      "metadata": {
+        "description": "Locations"
+      }
+    },
+    "userName": {
+      "type": "string"
+    },
+    "adminPwd": {
+      "type": "securestring"
+    },
+    "storageType": {
+      "type": "string",
+      "allowedValues": [
+        "Standard_LRS",
+        "Standard_ZRS",
+        "Standard_GRS",
+        "Standard_RAGRS",
+        "Premium_LRS"
+      ]
+    },
+    "vmNamePrefix": {
+      "type": "string"
+    },
+    "environment": {
+      "type": "string"
+    },
+    "OSVersion": {
+      "type": "string"
+    },
+    "imagePublisher": {
+      "type": "string"
+    },
+    "imageOffer": {
+      "type": "string"
+    }
+  },
+  "variables": {
+  },
+  "resources": [
+    {
+      "name": "[concat(parameters('environment'),copyIndex())]",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2015-01-01",
+      "dependsOn": [ ],
+      "tags": {
+        "displayName": "geo-environment"
+      },
+      "copy": {
+        "count": "[length(parameters('locations'))]",
+        "name": "environmentCountIndex"
+      },
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "userName": { "value": "[parameters('userName')]" },
+          "adminPwd": { "value": "[parameters('adminPwd')]" },
+          "location": { "value": "[parameters('locations')[copyIndex()]]" },
+          "OSVersion": { "value": "OL70" },
+          "imagePublisher": { "value": "oracle" },
+          "imageOffer": { "value": "Oracle-Linux-7" },
+          "environment": { "value": "[concat(parameters('environment'),copyIndex())]" },
+          "storageType": {"value": "[parameters('storageType')]" }
+        }
+      }
+    }
+  ],
+  "outputs": {
+  }
+}
