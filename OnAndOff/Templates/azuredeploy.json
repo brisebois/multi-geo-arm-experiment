@@ -122,20 +122,6 @@
               "priority": 100,
               "direction": "Inbound"
             }
-          },
-          {
-            "name": "web_rule_http",
-            "properties": {
-              "description": "Allow HTTP WEB",
-              "protocol": "Http",
-              "sourcePortRange": "*",
-              "destinationPortRange": "80",
-              "sourceAddressPrefix": "Internet",
-              "destinationAddressPrefix": "*",
-              "access": "Allow",
-              "priority": 102,
-              "direction": "Inbound"
-            }
           }
         ]
       }
