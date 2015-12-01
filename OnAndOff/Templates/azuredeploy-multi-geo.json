@@ -51,21 +51,25 @@
       //  "count": "[length(parameters('locations'))]",
       //  "name": "loop"
       //},
+      "tags": {
+        "displayName": "Multi-Geo Deployment"
+      },
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "http://raw.githubusercontent.com/brisebois/multi-geo-arm-experiment/master/OnAndOff/Templates/azuredeploy.json",
+          "uri": "https://raw.githubusercontent.com/brisebois/multi-geo-arm-experiment/master/OnAndOff/Templates/azuredeploy.json",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
           "userName": { "value": "[parameters('userName')]" },
           "adminPwd": { "value": "[parameters('adminPwd')]" },
-          "location": { "value": "[parameters('locations')[1]]" },
+          "location": { "value": "East US" },
           "OSVersion": { "value": "OL70" },
           "imagePublisher": { "value": "oracle" },
           "imageOffer": { "value": "Oracle-Linux-7" },
+          "vmNamePrefix": { "value": "[parameters('vmNamePrefix')]" },
           "environment": { "value": "[parameters('environment')]" },
-          "storageType": {"value": "[parameters('storageType')]" }
+          "storageType": { "value": "[parameters('storageType')]" }
         }
       }
     }
