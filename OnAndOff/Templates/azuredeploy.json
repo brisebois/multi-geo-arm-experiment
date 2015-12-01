@@ -52,7 +52,7 @@
     "vnetID": "[resourceId('Microsoft.Network/virtualNetworks', variables('vnetName'))]",
     "subnetRef": "[concat(variables('vnetID'), '/subnets/', variables('subnet1Name'))]",
     "storageAccountContainerName": "vhds",
-    "nicName": "[concat(parameters('vmNamePrefix'), 'NetworkInterface')]",
+    "nicName": "[concat(parameters('environment'), parameters('vmNamePrefix'), 'NetworkInterface')]",
     "publicIPAddress": "[concat(parameters('environment'), parameters('vmNamePrefix'))]",
     "lbPublicIPAddressName": "[concat(parameters('environment'), parameters('vmNamePrefix'))]",
     "lbPublicIPAddressType": "Dynamic",
