@@ -44,15 +44,12 @@
   },
   "resources": [
     {
-      "name": "[concat(parameters('environment'))]",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2015-01-01",
-      //"copy": {
-      //  "count": "[length(parameters('locations'))]",
-      //  "name": "loop"
-      //},
-      "tags": {
-        "displayName": "Multi-Geo Deployment"
+      "name": "[concat(parameters('environment'),copyIndex())]",
+      "copy": {
+        "count": "[length(parameters('locations'))]",
+        "name": "loop"
       },
       "properties": {
         "mode": "Incremental",
@@ -63,12 +60,12 @@
         "parameters": {
           "userName": { "value": "[parameters('userName')]" },
           "adminPwd": { "value": "[parameters('adminPwd')]" },
-          "location": { "value": "East US" },
+          "location": { "value": "[parameters('locations')[copyIndex()]]" },
           "OSVersion": { "value": "OL70" },
           "imagePublisher": { "value": "oracle" },
           "imageOffer": { "value": "Oracle-Linux-7" },
           "vmNamePrefix": { "value": "[parameters('vmNamePrefix')]" },
-          "environment": { "value": "[parameters('environment')]" },
+          "environment": { "value": "[concat(parameters('environment'), copyIndex())]" },
           "storageType": { "value": "[parameters('storageType')]" }
         }
       }

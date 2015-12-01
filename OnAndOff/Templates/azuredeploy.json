@@ -40,7 +40,7 @@
   },
   "variables": {
     "availabilitySetName": "[concat(parameters('environment'),'as')]",
-    "vmCount": 10,
+    "vmCount": 2,
     "vnetName": "[concat(parameters('environment'),'vnet')]",
     "vnetPrefix": "10.0.0.0/16",
     "subnet1Name": "subnet",
