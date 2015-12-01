@@ -88,7 +88,7 @@
     {
       "apiVersion": "2015-05-01-preview",
       "type": "Microsoft.Network/networkSecurityGroups",
-      "name": "[variables('networkSecurityGroupsName')]",
+      "name": "[concat(parameters('environment'),variables('networkSecurityGroupsName'))]",
       "location": "[parameters('location')]",
       "tags": {
         "displayName": "Network Security Groups"
@@ -122,6 +122,20 @@
               "priority": 100,
               "direction": "Inbound"
             }
+          },
+          {
+            "name": "web_rule_http",
+            "properties": {
+              "description": "Allow HTTP WEB",
+              "protocol": "Http",
+              "sourcePortRange": "*",
+              "destinationPortRange": "80",
+              "sourceAddressPrefix": "Internet",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 102,
+              "direction": "Inbound"
+            }
           }
         ]
       }
@@ -132,7 +146,7 @@
       "location": "[parameters('location')]",
       "apiVersion": "2015-05-01-preview",
       "dependsOn": [
-        "[concat('Microsoft.Network/networkSecurityGroups/', variables('networkSecurityGroupsName'))]"
+        "[concat('Microsoft.Network/networkSecurityGroups/', parameters('environment'), variables('networkSecurityGroupsName'))]"
       ],
 
       "tags": {

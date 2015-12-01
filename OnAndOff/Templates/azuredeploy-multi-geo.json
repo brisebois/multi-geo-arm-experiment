@@ -80,7 +80,8 @@
       "location": "global",
       "dependsOn": [
         "[concat('Microsoft.Resources/deployments/', concat(parameters('environment'),0))]",
-        "[concat('Microsoft.Resources/deployments/', concat(parameters('environment'),1))]"
+        "[concat('Microsoft.Resources/deployments/', concat(parameters('environment'),1))]",
+        "[concat('Microsoft.Resources/deployments/', concat(parameters('environment'),2))]"
       ],
       "properties": {
         "profileStatus": "Enabled",
@@ -108,7 +109,16 @@
             "name": "centralus",
             "type": "Microsoft.Network/trafficManagerProfiles/azureEndpoints",
             "properties": {
-              "targetResourceId": "[resourceId('Microsoft.Network/publicIPAddresses',concat(parameters('environment'),'0', parameters('vmNamePrefix')))]",
+              "targetResourceId": "[resourceId('Microsoft.Network/publicIPAddresses',concat(parameters('environment'),'1', parameters('vmNamePrefix')))]",
+              "endpointStatus": "Enabled",
+              "weight": 1
+            }
+          },
+          {
+            "name": "westus",
+            "type": "Microsoft.Network/trafficManagerProfiles/azureEndpoints",
+            "properties": {
+              "targetResourceId": "[resourceId('Microsoft.Network/publicIPAddresses',concat(parameters('environment'),'2', parameters('vmNamePrefix')))]",
               "endpointStatus": "Enabled",
               "weight": 1
             }
