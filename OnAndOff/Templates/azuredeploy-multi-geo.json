@@ -4,13 +4,6 @@
   "parameters": {
     "locations": {
       "type": "array",
-      "defaultValue": [
-        "eastasia",
-        "southeastasia",
-        "eastus",
-        "westus",
-        "westeurope"
-      ],
       "metadata": {
         "description": "Locations"
       }
@@ -51,31 +44,27 @@
   },
   "resources": [
     {
-      "name": "[concat(parameters('environment'),copyIndex())]",
+      "name": "[concat(parameters('environment'))]",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2015-01-01",
-      "dependsOn": [ ],
-      "tags": {
-        "displayName": "geo-environment"
-      },
-      "copy": {
-        "count": "[length(parameters('locations'))]",
-        "name": "environmentCountIndex"
-      },
+      //"copy": {
+      //  "count": "[length(parameters('locations'))]",
+      //  "name": "loop"
+      //},
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "",
+          "uri": "http://raw.githubusercontent.com/brisebois/multi-geo-arm-experiment/master/OnAndOff/Templates/azuredeploy.json",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
           "userName": { "value": "[parameters('userName')]" },
           "adminPwd": { "value": "[parameters('adminPwd')]" },
-          "location": { "value": "[parameters('locations')[copyIndex()]]" },
+          "location": { "value": "[parameters('locations')[1]]" },
           "OSVersion": { "value": "OL70" },
           "imagePublisher": { "value": "oracle" },
           "imageOffer": { "value": "Oracle-Linux-7" },
-          "environment": { "value": "[concat(parameters('environment'),copyIndex())]" },
+          "environment": { "value": "[parameters('environment')]" },
           "storageType": {"value": "[parameters('storageType')]" }
         }
       }
