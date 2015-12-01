@@ -38,6 +38,9 @@
     },
     "imageOffer": {
       "type": "string"
+    },
+    "tmDnsName": {
+      "type": "string"
     }
   },
   "variables": {
@@ -69,7 +72,51 @@
           "storageType": { "value": "[parameters('storageType')]" }
         }
       }
+    },
+    {
+      "apiVersion": "2015-04-28-preview",
+      "type": "Microsoft.Network/trafficManagerProfiles",
+      "name": "[concat(parameters('environment'),'tm')]",
+      "location": "global",
+      "dependsOn": [
+        "[concat('Microsoft.Resources/deployments/', concat(parameters('environment'),0))]",
+        "[concat('Microsoft.Resources/deployments/', concat(parameters('environment'),1))]"
+      ],
+      "properties": {
+        "profileStatus": "Enabled",
+        "trafficRoutingMethod": "Weighted",
+        "dnsConfig": {
+          "relativeName": "[parameters('tmDnsName')]",
+          "ttl": 30
+        },
+        "monitorConfig": {
+          "protocol": "http",
+          "port": 80,
+          "path": "/"
+        },
+        "endpoints": [
+          {
+            "name": "eastus",
+            "type": "Microsoft.Network/trafficManagerProfiles/azureEndpoints",
+            "properties": {
+              "targetResourceId": "[resourceId('Microsoft.Network/publicIPAddresses',concat(parameters('environment'),'0', parameters('vmNamePrefix')))]",
+              "endpointStatus": "Enabled",
+              "weight": 1
+            }
+          },
+          {
+            "name": "centralus",
+            "type": "Microsoft.Network/trafficManagerProfiles/azureEndpoints",
+            "properties": {
+              "targetResourceId": "[resourceId('Microsoft.Network/publicIPAddresses',concat(parameters('environment'),'0', parameters('vmNamePrefix')))]",
+              "endpointStatus": "Enabled",
+              "weight": 1
+            }
+          }
+        ]
+      }
     }
+
   ],
   "outputs": {
   }
