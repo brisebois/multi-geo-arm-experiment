@@ -229,7 +229,7 @@
       }
     },
     {
-      "name": "[concat(parameters('vmNamePrefix'), copyIndex())]",
+      "name": "[concat(variables('vmNamePrefix'), copyIndex())]",
       "type": "Microsoft.Compute/virtualMachines",
       "location": "[parameters('location')]",
       "apiVersion": "2015-05-01-preview",
@@ -253,7 +253,7 @@
           "vmSize": "[variables('vmSize')]"
         },
         "osProfile": {
-          "computerName": "[concat(parameters('vmNamePrefix'), copyIndex())]",
+          "computerName": "[concat(variables('vmNamePrefix'), copyIndex())]",
           "adminUsername": "[parameters('userName')]",
           "adminPassword": "[parameters('adminPwd')]"
         },
