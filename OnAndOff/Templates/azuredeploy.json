@@ -63,6 +63,29 @@
   },
   "resources": [
     {
+      "name": "[variables('vmNamePrefix')]",
+      "type": "Microsoft.Storage/storageAccounts",
+      "location": "[parameters('location')]",
+      "apiVersion": "2015-05-01-preview",
+      "dependsOn": [ ],
+      "tags": {
+        "displayName": "Storage Account"
+      },
+      "properties": {
+        "accountType": "[parameters('storageType')]"
+      }
+    },
+    {
+      "name": "[variables('availabilitySetName')]",
+      "type": "Microsoft.Compute/availabilitySets",
+      "location": "[parameters('location')]",
+      "apiVersion": "2015-05-01-preview",
+      "dependsOn": [ ],
+      "tags": {
+        "displayName": "Availability Set"
+      }
+    },
+    {
       "apiVersion": "2015-05-01-preview",
       "type": "Microsoft.Network/networkSecurityGroups",
       "name": "[variables('networkSecurityGroupsName')]",
@@ -167,19 +190,6 @@
       }
     },
     {
-      "name": "[variables('vmNamePrefix')]",
-      "type": "Microsoft.Storage/storageAccounts",
-      "location": "[parameters('location')]",
-      "apiVersion": "2015-05-01-preview",
-      "dependsOn": [ ],
-      "tags": {
-        "displayName": "Storage Account"
-      },
-      "properties": {
-        "accountType": "[parameters('storageType')]"
-      }
-    },
-    {
       "name": "[concat(variables('nicName'), copyIndex())]",
       "type": "Microsoft.Network/networkInterfaces",
       "location": "[parameters('location')]",
@@ -279,16 +289,6 @@
             }
           ]
         }
-      }
-    },
-    {
-      "name": "[variables('availabilitySetName')]",
-      "type": "Microsoft.Compute/availabilitySets",
-      "location": "[parameters('location')]",
-      "apiVersion": "2015-05-01-preview",
-      "dependsOn": [ ],
-      "tags": {
-        "displayName": "Availability Set"
       }
     },
     {
