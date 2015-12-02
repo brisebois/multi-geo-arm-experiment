@@ -88,7 +88,7 @@
     {
       "apiVersion": "2015-05-01-preview",
       "type": "Microsoft.Network/networkSecurityGroups",
-      "name": "[concat(parameters('environment'),variables('networkSecurityGroupsName'))]",
+      "name": "[variables('networkSecurityGroupsName')]",
       "location": "[parameters('location')]",
       "tags": {
         "displayName": "Network Security Groups"
@@ -132,7 +132,7 @@
       "location": "[parameters('location')]",
       "apiVersion": "2015-05-01-preview",
       "dependsOn": [
-        "[concat('Microsoft.Network/networkSecurityGroups/', parameters('environment'),variables('networkSecurityGroupsName'))]"
+        "[concat('Microsoft.Network/networkSecurityGroups/', variables('networkSecurityGroupsName'))]"
       ],
 
       "tags": {
@@ -147,9 +147,9 @@
         "subnets": [
           {
             "name": "[variables('subnet1Name')]",
-            "properties": {"addressPrefix": "[variables('subnet1Prefix')]"},
+            "properties": { "addressPrefix": "[variables('subnet1Prefix')]" },
             "networkSecurityGroup": {
-              "id": "[resourceId('Microsoft.Network/networkSecurityGroups',concat(parameters('environment'),variables('networkSecurityGroupsName')))]"
+              "id": "[resourceId('Microsoft.Network/networkSecurityGroups',variables('networkSecurityGroupsName'))]"
             }
           }
         ]
