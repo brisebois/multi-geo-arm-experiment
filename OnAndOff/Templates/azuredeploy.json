@@ -132,7 +132,7 @@
       "location": "[parameters('location')]",
       "apiVersion": "2015-05-01-preview",
       "dependsOn": [
-        "[concat('Microsoft.Network/networkSecurityGroups/', parameters('environment'), variables('networkSecurityGroupsName'))]"
+        "[concat('Microsoft.Network/networkSecurityGroups/', parameters('environment'),variables('networkSecurityGroupsName'))]"
       ],
 
       "tags": {
@@ -149,9 +149,9 @@
             "name": "[variables('subnet1Name')]",
             "properties": {
               "addressPrefix": "[variables('subnet1Prefix')]"
-            },
+            },            
             "networkSecurityGroup": {
-              "id": "[concat('Microsoft.Network/networkSecurityGroups/', parameters('environment'), variables('networkSecurityGroupsName'))]"
+              "id": "[concat('Microsoft.Network/networkSecurityGroups/', parameters('environment'),variables('networkSecurityGroupsName'))]"
             }
           }
         ]
