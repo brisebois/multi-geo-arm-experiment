@@ -149,9 +149,9 @@
             "name": "[variables('subnet1Name')]",
             "properties": {
               "addressPrefix": "[variables('subnet1Prefix')]"
-            },            
+            },
             "networkSecurityGroup": {
-              "id": "[concat('Microsoft.Network/networkSecurityGroups/', parameters('environment'),variables('networkSecurityGroupsName'))]"
+              "id": "[resourceId('Microsoft.Network/networkSecurityGroups',concat(parameters('environment'),variables('networkSecurityGroupsName')))]"
             }
           }
         ]
