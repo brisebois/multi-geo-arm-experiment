@@ -136,7 +136,7 @@
               "addressPrefix": "[variables('subnet1Prefix')]"
             },
             "networkSecurityGroup": {
-              "id": "[concat('Microsoft.Network/networkSecurityGroups/', variables('networkSecurityGroupsName'))]"
+              "id": "[resourceId('Microsoft.Network/networkSecurityGroups/', variables('networkSecurityGroupsName'))]"
             }
           }
         ]
