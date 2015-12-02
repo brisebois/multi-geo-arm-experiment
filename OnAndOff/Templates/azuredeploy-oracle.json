@@ -26,6 +26,13 @@
     "adminPwd": {
       "type": "securestring"
     },
+    "OSVersion": {
+      "type": "string",
+      "defaultValue": "OL70",
+      "allowedValues": [
+        "OL70"
+      ]
+    },
     "pipVmDnsName": {
       "type": "string",
       "minLength": 1,
@@ -46,6 +53,8 @@
     "subnet1Prefix": "10.0.0.0/24",
     "networkSecurityGroupsName": "alexnsg",
     "vmNamePrefix": "alexoracle",
+    "imagePublisher": "oracle",
+    "imageOffer": "Oracle-Linux-7",
     "OSDiskName": "OSDisk",
     "vmSize": "Standard_D1",
     "vnetID": "[resourceId('Microsoft.Network/virtualNetworks', variables('vnetName'))]",
@@ -110,7 +119,7 @@
       "dependsOn": [
         "[concat('Microsoft.Network/networkSecurityGroups/', variables('networkSecurityGroupsName'))]"
       ],
-
+ 
       "tags": {
         "displayName": "VNet"
       },
@@ -125,6 +134,9 @@
             "name": "[variables('subnet1Name')]",
             "properties": {
               "addressPrefix": "[variables('subnet1Prefix')]"
+            },
+            "networkSecurityGroup": {
+              "id": "[concat('Microsoft.Network/networkSecurityGroups/', variables('networkSecurityGroupsName'))]"
             }
           }
         ]
@@ -241,20 +253,31 @@
         "hardwareProfile": {
           "vmSize": "[variables('vmSize')]"
         },
+        "osProfile": {
+          "computerName": "[concat(parameters('vmNamePrefix'), copyIndex())]",
+          "adminUsername": "[parameters('userName')]",
+          "adminPassword": "[parameters('adminPwd')]"
+        },
         "storageProfile": {
+          "imageReference": {
+            "publisher": "[variables('imagePublisher')]",
+            "offer": "[variables('imageOffer')]",
+            "sku": "[parameters('OSVersion')]",
+            "version": "latest"
+          },
           "osDisk": {
             "name": "OSDisk",
-            "osType": "Linux",
             "vhd": {
               "uri": "[concat('http://', variables('vmNamePrefix'), '.blob.core.windows.net/', variables('storageAccountContainerName'), '/', concat(variables('OSDiskName'), copyIndex()), '.vhd')]"
             },
             "caching": "ReadWrite",
-            "createOption": "Attach"
+            "createOption": "FromImage"
           },
           "dataDisks": [
             {
-              "createOption": "Attach",
+              "createOption": "Empty",
               "lun": 0,
+              "diskSizeGB": "100",
               "name": "DATA",
               "vhd": { "uri": "[concat('http://', variables('vmNamePrefix'), '.blob.core.windows.net/', variables('storageAccountContainerName'), '/', concat('DataDisk', copyIndex()), '.vhd')]" }
             }

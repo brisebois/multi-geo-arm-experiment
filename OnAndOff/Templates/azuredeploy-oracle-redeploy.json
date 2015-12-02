@@ -4,6 +4,7 @@
   "parameters": {
     "storageType": {
       "type": "string",
+      "defaultValue": "Standard_LRS",
       "allowedValues": [
         "Standard_LRS",
         "Standard_ZRS",
@@ -13,83 +14,58 @@
       ]
     },
     "vmNamePrefix": {
-      "type": "string"
+      "type": "string",
+      "minLength": 1,
+      "defaultValue": "alexoracle"
     },
     "userName": {
-      "type": "string"
-    },
-    "location": {
       "type": "string",
-      "minLength": 1
+      "minLength": 1,
+      "defaultValue": "admdemo"
     },
     "adminPwd": {
       "type": "securestring"
     },
-    "OSVersion": {
-      "type": "string"
+    "pipVmDnsName": {
+      "type": "string",
+      "minLength": 1,
+      "defaultValue": "alexlinuxdemo"
     },
-    "imagePublisher": {
-      "type": "string"
-    },
-    "imageOffer": {
-      "type": "string"
-    },
-    "environment": {
-      "type": "string"
+    "pipLbDnsName": {
+      "type": "string",
+      "minLength": 1,
+      "defaultValue": "alexlinuxlbdemo"
     }
   },
   "variables": {
-    "availabilitySetName": "[concat(parameters('environment'),'as')]",
-    "vmCount": 2,
-    "vnetName": "[concat(parameters('environment'),'vnet')]",
+    "availabilitySetName": "alexavailabilityset",
+    "vmCount": 10,
+    "vnetName": "alexvnet",
     "vnetPrefix": "10.0.0.0/16",
     "subnet1Name": "subnet",
     "subnet1Prefix": "10.0.0.0/24",
-    "networkSecurityGroupsName": "[concat(parameters('environment'),'ngs')]",
-    "vmNamePrefix": "[concat(parameters('environment'),parameters('vmNamePrefix'))]",
+    "networkSecurityGroupsName": "alexnsg",
+    "vmNamePrefix": "alexoracle",
     "OSDiskName": "OSDisk",
     "vmSize": "Standard_D1",
     "vnetID": "[resourceId('Microsoft.Network/virtualNetworks', variables('vnetName'))]",
     "subnetRef": "[concat(variables('vnetID'), '/subnets/', variables('subnet1Name'))]",
     "storageAccountContainerName": "vhds",
-    "nicName": "[concat(parameters('environment'), parameters('vmNamePrefix'), 'NetworkInterface')]",
-    "publicIPAddress": "[concat(parameters('environment'), parameters('vmNamePrefix'))]",
-    "lbPublicIPAddressName": "[concat(parameters('environment'), parameters('vmNamePrefix'))]",
+    "nicName": "[concat(parameters('vmNamePrefix'), 'NetworkInterface')]",
+    "publicIPAddress": "alexmsvm",
+    "lbPublicIPAddressName": "alexms",
     "lbPublicIPAddressType": "Dynamic",
-    "lbName": "[concat(parameters('environment'),parameters('vmNamePrefix'))]",
+    "lbName": "lbalexms",
     "publicIPAddressID": "[resourceId('Microsoft.Network/publicIPAddresses', variables('lbPublicIPAddressName'))]",
     "lbID": "[resourceId('Microsoft.Network/loadBalancers',variables('lbName'))]",
     "frontEndIPConfigID": "[concat(variables('lbID'),'/frontendIPConfigurations/loadBalancerFrontend')]"
   },
   "resources": [
     {
-      "name": "[variables('vmNamePrefix')]",
-      "type": "Microsoft.Storage/storageAccounts",
-      "location": "[parameters('location')]",
-      "apiVersion": "2015-05-01-preview",
-      "dependsOn": [ ],
-      "tags": {
-        "displayName": "Storage Account"
-      },
-      "properties": {
-        "accountType": "[parameters('storageType')]"
-      }
-    },
-    {
-      "name": "[variables('availabilitySetName')]",
-      "type": "Microsoft.Compute/availabilitySets",
-      "location": "[parameters('location')]",
-      "apiVersion": "2015-05-01-preview",
-      "dependsOn": [ ],
-      "tags": {
-        "displayName": "Availability Set"
-      }
-    },
-    {
       "apiVersion": "2015-05-01-preview",
       "type": "Microsoft.Network/networkSecurityGroups",
-      "name": "[concat(parameters('environment'),variables('networkSecurityGroupsName'))]",
-      "location": "[parameters('location')]",
+      "name": "[variables('networkSecurityGroupsName')]",
+      "location": "[resourceGroup().location]",
       "tags": {
         "displayName": "Network Security Groups"
       },
@@ -129,10 +105,10 @@
     {
       "name": "[variables('vnetName')]",
       "type": "Microsoft.Network/virtualNetworks",
-      "location": "[parameters('location')]",
+      "location": "[resourceGroup().location]",
       "apiVersion": "2015-05-01-preview",
       "dependsOn": [
-        "[concat('Microsoft.Network/networkSecurityGroups/', parameters('environment'), variables('networkSecurityGroupsName'))]"
+        "[concat('Microsoft.Network/networkSecurityGroups/', variables('networkSecurityGroupsName'))]"
       ],
 
       "tags": {
@@ -151,7 +127,7 @@
               "addressPrefix": "[variables('subnet1Prefix')]"
             },
             "networkSecurityGroup": {
-              "id": "[concat('Microsoft.Network/networkSecurityGroups/', parameters('environment'), variables('networkSecurityGroupsName'))]"
+              "id": "[concat('Microsoft.Network/networkSecurityGroups/', variables('networkSecurityGroupsName'))]"
             }
           }
         ]
@@ -160,7 +136,7 @@
     {
       "name": "[concat(variables('publicIPAddress'), copyIndex())]",
       "type": "Microsoft.Network/publicIPAddresses",
-      "location": "[parameters('location')]",
+      "location": "[resourceGroup().location]",
       "apiVersion": "2015-05-01-preview",
       "dependsOn": [ ],
       "tags": {
@@ -173,7 +149,7 @@
       "properties": {
         "publicIPAllocationMethod": "Dynamic",
         "dnsSettings": {
-          "domainNameLabel": "[concat(parameters('vmNamePrefix'), copyIndex())]"
+          "domainNameLabel": "[concat(parameters('pipVmDnsName'), copyIndex())]"
         }
       }
     },
@@ -181,7 +157,7 @@
       "apiVersion": "2015-06-15",
       "type": "Microsoft.Network/publicIPAddresses",
       "name": "[variables('lbPublicIPAddressName')]",
-      "location": "[parameters('location')]",
+      "location": "[resourceGroup().location]",
       "tags": {
         "displayName": "LB Public IP"
       },
@@ -193,9 +169,22 @@
       }
     },
     {
+      "name": "[variables('vmNamePrefix')]",
+      "type": "Microsoft.Storage/storageAccounts",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2015-05-01-preview",
+      "dependsOn": [ ],
+      "tags": {
+        "displayName": "Storage Account"
+      },
+      "properties": {
+        "accountType": "[parameters('storageType')]"
+      }
+    },
+    {
       "name": "[concat(variables('nicName'), copyIndex())]",
       "type": "Microsoft.Network/networkInterfaces",
-      "location": "[parameters('location')]",
+      "location": "[resourceGroup().location]",
       "apiVersion": "2015-05-01-preview",
       "dependsOn": [
         "[concat('Microsoft.Network/virtualNetworks/', variables('vnetName'))]",
@@ -232,9 +221,9 @@
       }
     },
     {
-      "name": "[concat(variables('vmNamePrefix'), copyIndex())]",
+      "name": "[concat(parameters('vmNamePrefix'), copyIndex())]",
       "type": "Microsoft.Compute/virtualMachines",
-      "location": "[parameters('location')]",
+      "location": "[resourceGroup().location]",
       "apiVersion": "2015-05-01-preview",
       "dependsOn": [
         "[concat('Microsoft.Storage/storageAccounts/', variables('vmNamePrefix'))]",
@@ -255,31 +244,20 @@
         "hardwareProfile": {
           "vmSize": "[variables('vmSize')]"
         },
-        "osProfile": {
-          "computerName": "[concat(variables('vmNamePrefix'), copyIndex())]",
-          "adminUsername": "[parameters('userName')]",
-          "adminPassword": "[parameters('adminPwd')]"
-        },
         "storageProfile": {
-          "imageReference": {
-            "publisher": "[parameters('imagePublisher')]",
-            "offer": "[parameters('imageOffer')]",
-            "sku": "[parameters('OSVersion')]",
-            "version": "latest"
-          },
           "osDisk": {
             "name": "OSDisk",
+            "osType": "Linux",
             "vhd": {
               "uri": "[concat('http://', variables('vmNamePrefix'), '.blob.core.windows.net/', variables('storageAccountContainerName'), '/', concat(variables('OSDiskName'), copyIndex()), '.vhd')]"
             },
             "caching": "ReadWrite",
-            "createOption": "FromImage"
+            "createOption": "Attach"
           },
           "dataDisks": [
             {
-              "createOption": "Empty",
+              "createOption": "Attach",
               "lun": 0,
-              "diskSizeGB": "100",
               "name": "DATA",
               "vhd": { "uri": "[concat('http://', variables('vmNamePrefix'), '.blob.core.windows.net/', variables('storageAccountContainerName'), '/', concat('DataDisk', copyIndex()), '.vhd')]" }
             }
@@ -295,10 +273,20 @@
       }
     },
     {
+      "name": "[variables('availabilitySetName')]",
+      "type": "Microsoft.Compute/availabilitySets",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2015-05-01-preview",
+      "dependsOn": [ ],
+      "tags": {
+        "displayName": "Availability Set"
+      }
+    },
+    {
       "apiVersion": "2015-06-15",
       "name": "[variables('lbName')]",
       "type": "Microsoft.Network/loadBalancers",
-      "location": "[parameters('location')]",
+      "location": "[resourceGroup().location]",
       "dependsOn": [
         "[concat('Microsoft.Network/publicIPAddresses/', variables('lbPublicIPAddressName'))]"
       ],
